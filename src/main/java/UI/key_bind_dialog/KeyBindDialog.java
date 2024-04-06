@@ -7,21 +7,16 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 
 public class KeyBindDialog extends JDialog {
     private final Map<NativeKeyBind, String> keyBindings;
-    private final Map<NativeKeyBind, JTextField> fieldKey;
-    private final ArrayList<JTextField> allFields;
+    private final ArrayList<KeyInputField> allFields;
     private final Font font = new Font("TimesRoman", Font.BOLD, 20);
 
     public KeyBindDialog(Map<NativeKeyBind, String> keyBindings) {
         this.keyBindings = keyBindings;
-
-        int size = keyBindings.size();
-        this.fieldKey = new HashMap<>(size);
-        this.allFields = new ArrayList<>(size);
+        this.allFields = new ArrayList<>(keyBindings.size());
 
         setTitle("Bind global keys.");
         setMinimumSize(new Dimension(500, 500));
@@ -42,8 +37,11 @@ public class KeyBindDialog extends JDialog {
 
         JButton confirmButton = new JButton("Ok");
         confirmButton.addActionListener(e -> {
-            fieldKey.forEach((key, field)
-                    -> keyBindings.put(key, field.getText()));
+            allFields.forEach(keyField->{
+                NativeKeyBind keyBind = keyField.getKeyBinding();
+                String text =  keyField.getText();
+                keyBindings.put(keyBind, text);
+            });
             KeyBindDialog.this.setVisible(false);
         });
         mainPanel.add(confirmButton, "center");
@@ -60,9 +58,8 @@ public class KeyBindDialog extends JDialog {
         keyNameField.setFocusable(false);
         setFieldLook(keyNameField);
 
-        JTextField keyInputField = new KeyInputField(allFields);
+        KeyInputField keyInputField = new KeyInputField(keyBind, allFields);
         setFieldLook(keyInputField);
-        fieldKey.put(keyBind, keyInputField);
         allFields.add(keyInputField);
 
         wrapperPanel.add(keyNameField, "growx");

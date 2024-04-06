@@ -1,16 +1,21 @@
 package UI.key_bind_dialog;
 
+import configs.NativeKeyBind;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 
 public class KeyInputField extends JTextField {
+    private final NativeKeyBind keyBinding;
     private boolean isMarkedAsSame = false;
     private JTextField fieldWithSameInput = null;
-    private final ArrayList<JTextField> allFields;
+    private final ArrayList<KeyInputField> allFields;
 
-    KeyInputField(ArrayList<JTextField> allFields) {
+    KeyInputField(NativeKeyBind keyBinding,
+                  ArrayList<KeyInputField> allFields) {
+        this.keyBinding = keyBinding;
         this.allFields = allFields;
 
         addFocusListener(new FocusLostListener());
@@ -56,5 +61,9 @@ public class KeyInputField extends JTextField {
                 setText(fullName);
             }
         }
+    }
+
+    public NativeKeyBind getKeyBinding() {
+        return keyBinding;
     }
 }
